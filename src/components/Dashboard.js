@@ -36,6 +36,7 @@ function Dashboard({ token, handleLogout }) {
 
   useEffect(() => {
     fetchExpenses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Event handler adding new transactional element to backend engine
