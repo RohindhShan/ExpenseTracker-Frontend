@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function Dashboard({ token, handleLogout }) {
-  // 💾 Core Ledger Database State Matrix
+  // 💾 State Core System
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([
     "Food",
@@ -12,14 +12,13 @@ function Dashboard({ token, handleLogout }) {
     "Medical",
   ]);
 
-  // 📝 Form Inputs State Persistence
   const [budget, setBudget] = useState(5000);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Food");
   const [loading, setLoading] = useState(false);
 
-  // 🔄 Fetch all stored database transactions on render gateway
+  // 🔄 Fetch Stream Mapping
   const fetchLedgerData = async () => {
     try {
       const response = await fetch(
@@ -37,7 +36,7 @@ function Dashboard({ token, handleLogout }) {
         setTransactions(data);
       }
     } catch (err) {
-      console.error("Database sync pipeline failure:", err);
+      console.error("Database sync issue:", err);
     }
   };
 
@@ -45,7 +44,7 @@ function Dashboard({ token, handleLogout }) {
     fetchLedgerData();
   }, [token]);
 
-  // 📤 Form submission execution system
+  // 📤 Form Submit Stream
   const handleAddTransaction = async (e) => {
     e.preventDefault();
     if (!title || !amount) return;
@@ -73,45 +72,57 @@ function Dashboard({ token, handleLogout }) {
       if (response.ok) {
         setTitle("");
         setAmount("");
-        fetchLedgerData(); // Refresh current ledger view pipeline
+        fetchLedgerData();
       }
     } catch (err) {
-      alert("Failed to inject record into cloud database matrix.");
+      alert("Database matrix record upload failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧮 Math analytics computation engines
+  // 🧮 Computation Matrix
   const totalExpenses = transactions.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0,
   );
   const ledgerBalance = budget - totalExpenses;
 
+  // 🎨 Real Responsive Flex Grid Architecture (Laptop & Mobile Adaptive System)
   const styles = {
     dashboardContainer: {
       backgroundColor: "#111827",
       minHeight: "100vh",
       color: "#ffffff",
       fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-      padding: "40px",
+      padding: "20px",
       boxSizing: "border-box",
     },
     headerRow: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: "40px",
+      flexWrap: "wrap",
+      gap: "15px",
+      maxWidth: "1200px",
+      margin: "0 auto 30px auto",
       borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
       paddingBottom: "20px",
     },
-    heading: { fontSize: "2.2rem", fontWeight: "800", margin: 0 },
-    subheading: { color: "#94a3b8", fontSize: "0.95rem", margin: "5px 0 0 0" },
+    heading: {
+      fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
+      fontWeight: "800",
+      margin: 0,
+    },
+    subheading: {
+      color: "#94a3b8",
+      fontSize: "0.9rem",
+      margin: "5px 0 0 0",
+    },
     logoutBtn: {
       backgroundColor: "#ef4444",
       color: "#ffffff",
-      padding: "12px 24px",
+      padding: "10px 20px",
       border: "none",
       borderRadius: "12px",
       fontWeight: "600",
@@ -120,7 +131,9 @@ function Dashboard({ token, handleLogout }) {
     },
     workspaceLayout: {
       display: "flex",
-      gap: "30px",
+      flexDirection: "row",
+      flexWrap: "wrap", // Laptop-la side-by-side, mobile-la automatic wrap stack down!
+      gap: "25px",
       maxWidth: "1200px",
       margin: "0 auto",
     },
@@ -128,8 +141,8 @@ function Dashboard({ token, handleLogout }) {
       backgroundColor: "rgba(24, 31, 46, 0.95)",
       border: `1px solid ${borderColor}`,
       borderRadius: "24px",
-      padding: "35px",
-      flex: 1,
+      padding: "30px",
+      flex: "1 1 340px", // Dynamic sizing baseline
       boxSizing: "border-box",
       boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
     }),
@@ -160,7 +173,7 @@ function Dashboard({ token, handleLogout }) {
       color: "#ffffff",
       fontSize: "0.95rem",
       boxSizing: "border-box",
-      marginBottom: "12px",
+      marginBottom: "5px",
     },
     submitBtn: {
       width: "100%",
@@ -172,7 +185,7 @@ function Dashboard({ token, handleLogout }) {
       fontWeight: "600",
       fontSize: "1rem",
       cursor: "pointer",
-      marginTop: "15px",
+      marginTop: "20px",
       boxShadow: "0 4px 15px rgba(59, 130, 246, 0.2)",
     },
     ledgerItem: {
@@ -188,7 +201,7 @@ function Dashboard({ token, handleLogout }) {
 
   return (
     <div style={styles.dashboardContainer}>
-      {/* Top Navigation Frame */}
+      {/* Top Banner Row */}
       <div style={styles.headerRow}>
         <div>
           <h1 style={styles.heading}>FinTech Tracker Premium 💸</h1>
@@ -201,9 +214,9 @@ function Dashboard({ token, handleLogout }) {
         </button>
       </div>
 
-      {/* Main Core Engine System */}
+      {/* Workspace System Grid */}
       <div style={styles.workspaceLayout}>
-        {/* Left Side: Controller Form */}
+        {/* Left Controller Panel */}
         <div style={styles.cardBox("rgba(59, 130, 246, 0.2)")}>
           <div style={styles.sectionTag("#3b82f6", "rgba(59, 130, 246, 0.1)")}>
             TRANSACTION MANAGEMENT ENGINE
@@ -224,7 +237,7 @@ function Dashboard({ token, handleLogout }) {
             <input
               type="text"
               style={styles.inputField}
-              placeholder="e.g., Dinner, Amazon, Rent"
+              placeholder="e.g., Dinner, Fuel"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -254,23 +267,32 @@ function Dashboard({ token, handleLogout }) {
             </select>
 
             <button type="submit" style={styles.submitBtn} disabled={loading}>
-              {loading ? "Syncing Record..." : "Inject Ledger Record"}
+              {loading ? "Processing Sync..." : "Inject Ledger Record"}
             </button>
           </form>
         </div>
 
-        {/* Right Side: Data Feed and Statistics */}
+        {/* Right Analytics Stream */}
         <div style={styles.cardBox("rgba(16, 185, 129, 0.2)")}>
           <div style={styles.sectionTag("#10b981", "rgba(16, 185, 129, 0.1)")}>
             REALTIME ANALYTICS RADAR
           </div>
 
-          <div style={{ display: "flex", gap: "20px", marginBottom: "25px" }}>
-            <div style={{ flex: 1 }}>
-              <h4 style={{ color: "#94a3b8", margin: 0 }}>Available Balance</h4>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginBottom: "25px",
+              flexWrap: "wrap",
+            }}
+          >
+            <div style={{ flex: "1 1 120px" }}>
+              <h4 style={{ color: "#94a3b8", margin: 0, fontSize: "0.9rem" }}>
+                Available Balance
+              </h4>
               <p
                 style={{
-                  fontSize: "2rem",
+                  fontSize: "1.8rem",
                   fontWeight: "800",
                   color: "#10b981",
                   margin: "5px 0",
@@ -279,11 +301,13 @@ function Dashboard({ token, handleLogout }) {
                 ₹{ledgerBalance}
               </p>
             </div>
-            <div style={{ flex: 1 }}>
-              <h4 style={{ color: "#94a3b8", margin: 0 }}>Total Burn Rate</h4>
+            <div style={{ flex: "1 1 120px" }}>
+              <h4 style={{ color: "#94a3b8", margin: 0, fontSize: "0.9rem" }}>
+                Total Burn Rate
+              </h4>
               <p
                 style={{
-                  fontSize: "2rem",
+                  fontSize: "1.8rem",
                   fontWeight: "800",
                   color: "#ef4444",
                   margin: "5px 0",
@@ -296,7 +320,7 @@ function Dashboard({ token, handleLogout }) {
 
           <h3
             style={{
-              fontSize: "1.1rem",
+              fontSize: "1.05rem",
               marginBottom: "15px",
               color: "#e2e8f0",
             }}
@@ -305,7 +329,7 @@ function Dashboard({ token, handleLogout }) {
           </h3>
           <div
             style={{
-              maxHeight: "250px",
+              maxHeight: "280px",
               overflowY: "auto",
               paddingRight: "5px",
             }}
@@ -325,7 +349,13 @@ function Dashboard({ token, handleLogout }) {
               transactions.map((item) => (
                 <div key={item.id} style={styles.ledgerItem}>
                   <div>
-                    <strong style={{ display: "block", color: "#ffffff" }}>
+                    <strong
+                      style={{
+                        display: "block",
+                        color: "#ffffff",
+                        fontSize: "0.95rem",
+                      }}
+                    >
                       {item.title}
                     </strong>
                     <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
