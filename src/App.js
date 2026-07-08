@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function App() {
-  // 🔐 Authentication System & Database State Matrix
+  // 🔐 Authentication & Ledger Database State Matrix
   const [token, setToken] = useState(localStorage.getItem("userToken") || "");
   const [transactions, setTransactions] = useState([]);
   const [categories] = useState([
@@ -13,14 +13,14 @@ function App() {
     "Medical",
   ]);
 
-  // 📝 Form Controller Variables
+  // 📝 Input Variables
   const [budget, setBudget] = useState(5000);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Food");
   const [loading, setLoading] = useState(false);
 
-  // 🔄 Fetch All Live Database Records
+  // 🔄 Live Fetch Datastream Stream Pipeline
   const fetchLedgerData = async () => {
     if (!token) return;
     try {
@@ -39,7 +39,7 @@ function App() {
         setTransactions(data);
       }
     } catch (err) {
-      console.error("Database sync failure:", err);
+      console.error("Database cloud pipeline offline:", err);
     }
   };
 
@@ -48,7 +48,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  // 📤 Inject New Record System
+  // 📤 Record Injection Pipeline
   const handleAddTransaction = async (e) => {
     e.preventDefault();
     if (!title || !amount) return;
@@ -79,7 +79,7 @@ function App() {
         fetchLedgerData();
       }
     } catch (err) {
-      alert("Failed to sync entry to cloud datastore.");
+      alert("Failed to inject matrix record.");
     } finally {
       setLoading(false);
     }
@@ -90,21 +90,21 @@ function App() {
     setToken("");
   };
 
-  // 🧮 Math Analytics Computations
+  // 🧮 Operational Calculations
   const totalExpenses = transactions.reduce(
     (sum, item) => sum + parseFloat(item.amount || 0),
     0,
   );
   const ledgerBalance = budget - totalExpenses;
 
-  // 🎨 Real Responsive UI Setup (Both PC Grid and Mobile Stack)
+  // 🎨 Original Premium Layout Style System
   const styles = {
     dashboardContainer: {
       backgroundColor: "#111827",
       minHeight: "100vh",
       color: "#ffffff",
       fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-      padding: "20px",
+      padding: "30px",
       boxSizing: "border-box",
     },
     headerRow: {
@@ -114,7 +114,7 @@ function App() {
       flexWrap: "wrap",
       gap: "15px",
       maxWidth: "1200px",
-      margin: "0 auto 30px auto",
+      margin: "0 auto 40px auto",
       borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
       paddingBottom: "20px",
     },
@@ -123,11 +123,11 @@ function App() {
       fontWeight: "800",
       margin: 0,
     },
-    subheading: { color: "#94a3b8", fontSize: "0.9rem", margin: "5px 0 0 0" },
+    subheading: { color: "#94a3b8", fontSize: "0.95rem", margin: "5px 0 0 0" },
     logoutBtn: {
       backgroundColor: "#ef4444",
       color: "#ffffff",
-      padding: "10px 20px",
+      padding: "12px 24px",
       border: "none",
       borderRadius: "12px",
       fontWeight: "600",
@@ -138,7 +138,7 @@ function App() {
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: "25px",
+      gap: "30px",
       maxWidth: "1200px",
       margin: "0 auto",
     },
@@ -146,7 +146,7 @@ function App() {
       backgroundColor: "rgba(24, 31, 46, 0.95)",
       border: `1px solid ${borderColor}`,
       borderRadius: "24px",
-      padding: "30px",
+      padding: "35px",
       flex: "1 1 340px",
       boxSizing: "border-box",
       boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
@@ -159,7 +159,7 @@ function App() {
       display: "inline-block",
       fontSize: "0.8rem",
       fontWeight: "700",
-      marginBottom: "20px",
+      marginBottom: "25px",
     }),
     inputLabel: {
       display: "block",
@@ -190,7 +190,7 @@ function App() {
       fontWeight: "600",
       fontSize: "1rem",
       cursor: "pointer",
-      marginTop: "20px",
+      marginTop: "25px",
       boxShadow: "0 4px 15px rgba(59, 130, 246, 0.2)",
     },
     ledgerItem: {
@@ -206,6 +206,7 @@ function App() {
 
   return (
     <div style={styles.dashboardContainer}>
+      {/* Upper Navigation Row */}
       <div style={styles.headerRow}>
         <div>
           <h1 style={styles.heading}>FinTech Tracker Premium 💸</h1>
@@ -218,11 +219,12 @@ function App() {
         </button>
       </div>
 
+      {/* Core Grid Matrix Workspace */}
       <div style={styles.workspaceLayout}>
-        {/* Left Side Input Mechanism */}
+        {/* Left Input Section Card */}
         <div style={styles.cardBox("rgba(59, 130, 246, 0.2)")}>
           <div style={styles.sectionTag("#3b82f6", "rgba(59, 130, 246, 0.1)")}>
-            TRANSACTION MANAGEMENT ENGINE
+            EXECUTIVE TRANSACTION CONTROL
           </div>
 
           <form onSubmit={handleAddTransaction}>
@@ -240,7 +242,7 @@ function App() {
             <input
               type="text"
               style={styles.inputField}
-              placeholder="e.g., Dinner, Fuel"
+              placeholder="e.g., Dinner, Fuel, Rent"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -270,15 +272,15 @@ function App() {
             </select>
 
             <button type="submit" style={styles.submitBtn} disabled={loading}>
-              {loading ? "Processing Sync..." : "Inject Ledger Record"}
+              {loading ? "Processing Sync..." : "EXECUTE RECORD INJECTION"}
             </button>
           </form>
         </div>
 
-        {/* Right Side Database Feed Sync */}
+        {/* Right Analytics View Card */}
         <div style={styles.cardBox("rgba(16, 185, 129, 0.2)")}>
           <div style={styles.sectionTag("#10b981", "rgba(16, 185, 129, 0.1)")}>
-            REALTIME ANALYTICS RADAR
+            DYNAMIC ANALYTICS MONITOR
           </div>
 
           <div
@@ -295,7 +297,7 @@ function App() {
               </h4>
               <p
                 style={{
-                  fontSize: "1.8rem",
+                  fontSize: "2rem",
                   fontWeight: "800",
                   color: "#10b981",
                   margin: "5px 0",
@@ -306,11 +308,11 @@ function App() {
             </div>
             <div style={{ flex: "1 1 120px" }}>
               <h4 style={{ color: "#94a3b8", margin: 0, fontSize: "0.9rem" }}>
-                Total Burn Rate
+                TOTAL BURN ENGINE
               </h4>
               <p
                 style={{
-                  fontSize: "1.8rem",
+                  fontSize: "2rem",
                   fontWeight: "800",
                   color: "#ef4444",
                   margin: "5px 0",
@@ -328,7 +330,7 @@ function App() {
               color: "#e2e8f0",
             }}
           >
-            Stored Database Datastream
+            LIVE TRANSACTION DATASTREAM
           </h3>
           <div
             style={{
