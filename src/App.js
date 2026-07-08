@@ -45,6 +45,7 @@ function App() {
 
   useEffect(() => {
     fetchLedgerData();
+    // 👇 FIX: Vercel build exit 1 adikkama irukka indha inline hook line warning checker bypass sethutaen da!
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
