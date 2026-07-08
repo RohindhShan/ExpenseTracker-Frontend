@@ -1,13 +1,87 @@
-import React, { useState } from "react";
-import Dashboard from "./components/Dashboard";
+import React, { useState, useEffect } from "react";
 
 function App() {
-  // Global token state persistence
+  // 🔐 Authentication System & Database State Matrix
   const [token, setToken] = useState(localStorage.getItem("userToken") || "");
+  const [transactions, setTransactions] = useState([]);
+  const [categories] = useState([
+    "Food",
+    "Fuel",
+    "Rent",
+    "Gadgets",
+    "Entertainment",
+    "Medical",
+  ]);
 
-  const handleSetToken = (userToken) => {
-    localStorage.setItem("userToken", userToken);
-    setToken(userToken);
+  // 📝 Form Controller Variables
+  const [budget, setBudget] = useState(5000);
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Food");
+  const [loading, setLoading] = useState(false);
+
+  // 🔄 Fetch All Live Database Records
+  const fetchLedgerData = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://expensetracker-production-c04c.up.railway.app/api/expenses/",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setTransactions(data);
+      }
+    } catch (err) {
+      console.error("Database sync failure:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLedgerData();
+  }, [token]);
+
+  // 📤 Inject New Record System
+  const handleAddTransaction = async (e) => {
+    e.preventDefault();
+    if (!title || !amount) return;
+    setLoading(true);
+
+    const payload = {
+      title,
+      amount: parseFloat(amount),
+      category: selectedCategory,
+    };
+
+    try {
+      const response = await fetch(
+        "https://expensetracker-production-c04c.up.railway.app/api/expenses/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (response.ok) {
+        setTitle("");
+        setAmount("");
+        fetchLedgerData();
+      }
+    } catch (err) {
+      alert("Failed to sync entry to cloud datastore.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = () => {
@@ -15,86 +89,99 @@ function App() {
     setToken("");
   };
 
-  return (
-    <div className="App">
-      {token ? (
-        // Renders your feature-rich premium dashboard directly when token exists
-        <Dashboard token={token} handleLogout={handleLogout} />
-      ) : (
-        // Inline self-contained login and register framework interface
-        <AuthWrapper setToken={handleSetToken} />
-      )}
-    </div>
+  // 🧮 Math Analytics Computations
+  const totalExpenses = transactions.reduce(
+    (sum, item) => sum + parseFloat(item.amount || 0),
+    0,
   );
-}
+  const ledgerBalance = budget - totalExpenses;
 
-// Completely self-contained authentication matrix (No extra file imports required!)
-function AuthWrapper({ setToken }) {
-  const [isLoginView, setIsLoginView] = useState(true);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
+  // 🎨 Real Responsive UI Setup (Both PC Grid and Mobile Stack)
   const styles = {
-    authContainer: {
+    dashboardContainer: {
       backgroundColor: "#111827",
       minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
+      color: "#ffffff",
       fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-    },
-    cardWrapper: {
-      backgroundColor: "rgba(24, 31, 46, 0.95)",
-      maxWidth: "420px",
-      width: "100%",
-      borderRadius: "24px",
-      padding: "35px",
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-      border: "1px solid rgba(255, 255, 255, 0.08)",
+      padding: "20px",
       boxSizing: "border-box",
     },
-    toggleFlex: {
+    headerRow: {
       display: "flex",
-      gap: "10px",
-      marginBottom: "25px",
-      width: "100%",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: "15px",
+      maxWidth: "1200px",
+      margin: "0 auto 30px auto",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+      paddingBottom: "20px",
     },
-    toggleBtn: (isActive) => ({
-      flex: 1,
-      padding: "10px",
+    heading: {
+      fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
+      fontWeight: "800",
+      margin: 0,
+    },
+    subheading: { color: "#94a3b8", fontSize: "0.9rem", margin: "5px 0 0 0" },
+    logoutBtn: {
+      backgroundColor: "#ef4444",
+      color: "#ffffff",
+      padding: "10px 20px",
       border: "none",
       borderRadius: "12px",
       fontWeight: "600",
-      fontSize: "0.9rem",
       cursor: "pointer",
-      backgroundColor: isActive ? "#3b82f6" : "#1f293d",
-      color: "#ffffff",
-      transition: "all 0.3s",
+      boxShadow: "0 4px 15px rgba(239, 68, 68, 0.2)",
+    },
+    workspaceLayout: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: "25px",
+      maxWidth: "1200px",
+      margin: "0 auto",
+    },
+    cardBox: (borderColor) => ({
+      backgroundColor: "rgba(24, 31, 46, 0.95)",
+      border: `1px solid ${borderColor}`,
+      borderRadius: "24px",
+      padding: "30px",
+      flex: "1 1 340px",
+      boxSizing: "border-box",
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
     }),
-    inputBox: {
+    sectionTag: (color, bg) => ({
+      backgroundColor: bg,
+      color: color,
+      padding: "6px 12px",
+      borderRadius: "8px",
+      display: "inline-block",
+      fontSize: "0.8rem",
+      fontWeight: "700",
+      marginBottom: "20px",
+    }),
+    inputLabel: {
+      display: "block",
+      fontSize: "0.85rem",
+      fontWeight: "600",
+      color: "#94a3b8",
+      marginBottom: "8px",
+      marginTop: "15px",
+    },
+    inputField: {
       width: "100%",
       padding: "12px 14px",
+      backgroundColor: "#182235",
       border: "1px solid rgba(255, 255, 255, 0.1)",
       borderRadius: "12px",
-      backgroundColor: "#182235",
-      boxSizing: "border-box",
-      fontSize: "0.95rem",
-      marginBottom: "15px",
       color: "#ffffff",
+      fontSize: "0.95rem",
+      boxSizing: "border-box",
+      marginBottom: "5px",
     },
-    label: {
-      display: "block",
-      marginBottom: "6px",
-      fontSize: "0.85rem",
-      color: "#94a3b8",
-      fontWeight: "600",
-    },
-    submitBtn: (isRegister) => ({
+    submitBtn: {
       width: "100%",
-      backgroundColor: isRegister ? "#10b981" : "#3b82f6",
+      backgroundColor: "#3b82f6",
       color: "#ffffff",
       padding: "14px",
       border: "none",
@@ -102,167 +189,189 @@ function AuthWrapper({ setToken }) {
       fontWeight: "600",
       fontSize: "1rem",
       cursor: "pointer",
-      boxShadow: isRegister
-        ? "0 4px 15px rgba(16, 185, 129, 0.2)"
-        : "0 4px 15px rgba(59, 130, 246, 0.2)",
-      marginTop: "10px",
-    }),
-    alertText: {
-      color: "#ef4444",
-      backgroundColor: "rgba(239, 68, 68, 0.1)",
-      padding: "10px 14px",
-      borderRadius: "10px",
-      fontSize: "0.85rem",
-      marginBottom: "15px",
-      fontWeight: "500",
-      textAlign: "center",
-      border: "1px solid rgba(239, 68, 68, 0.2)",
+      marginTop: "20px",
+      boxShadow: "0 4px 15px rgba(59, 130, 246, 0.2)",
+    },
+    ledgerItem: {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "14px",
+      backgroundColor: "#1f293d",
+      borderRadius: "12px",
+      marginBottom: "10px",
+      borderLeft: "4px solid #ef4444",
     },
   };
 
-  const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage("");
-
-    const payload = isLoginView
-      ? { username, password }
-      : { username, email, password };
-    const targetEndpoint = isLoginView ? "login" : "register";
-
-    try {
-      const response = await fetch(
-        `https://expensetracker-production-c04c.up.railway.app/api/accounts/${targetEndpoint}/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        if (isLoginView) {
-          if (data.token) {
-            setToken(data.token); // Synchronizes global parent state gateway
-          } else {
-            setErrorMessage(
-              "Authentication successful but key signature not found.",
-            );
-          }
-        } else {
-          alert(
-            "Account successfully created! Routing back to login tab screen.",
-          );
-          setIsLoginView(true);
-          setErrorMessage("");
-        }
-      } else {
-        setErrorMessage(
-          data.error || data.username || "Invalid validation parameters.",
-        );
-      }
-    } catch (err) {
-      setErrorMessage(
-        "Network conflict: Unable to cross-verify parameters with backend.",
-      );
-    }
-  };
-
   return (
-    <div style={styles.authContainer}>
-      <h2
-        style={{
-          color: "#ffffff",
-          marginBottom: "20px",
-          fontWeight: "800",
-          fontSize: "1.7rem",
-        }}
-      >
-        Personal Expense Tracker 💰
-      </h2>
-
-      <div style={styles.cardWrapper}>
-        <div style={styles.toggleFlex}>
-          <button
-            type="button"
-            style={styles.toggleBtn(isLoginView)}
-            onClick={() => {
-              setIsLoginView(true);
-              setErrorMessage("");
-            }}
-          >
-            Login Screen
-          </button>
-          <button
-            type="button"
-            style={styles.toggleBtn(!isLoginView)}
-            onClick={() => {
-              setIsLoginView(false);
-              setErrorMessage("");
-            }}
-          >
-            New Account Register
-          </button>
+    <div style={styles.dashboardContainer}>
+      <div style={styles.headerRow}>
+        <div>
+          <h1 style={styles.heading}>FinTech Tracker Premium 💸</h1>
+          <p style={styles.subheading}>
+            Advanced Microfinance Operational Matrix Terminal
+          </p>
         </div>
+        <button style={styles.logoutBtn} onClick={handleLogout}>
+          Sign Out 🏃‍♂️
+        </button>
+      </div>
 
-        <h3
-          style={{
-            color: "#ffffff",
-            marginTop: 0,
-            marginBottom: "20px",
-            fontSize: "1.25rem",
-            fontWeight: "700",
-          }}
-        >
-          {isLoginView ? "Sign In Section 🔑" : "Register Section 📝"}
-        </h3>
+      <div style={styles.workspaceLayout}>
+        {/* Left Side Input Mechanism */}
+        <div style={styles.cardBox("rgba(59, 130, 246, 0.2)")}>
+          <div style={styles.sectionTag("#3b82f6", "rgba(59, 130, 246, 0.1)")}>
+            TRANSACTION MANAGEMENT ENGINE
+          </div>
 
-        {errorMessage && <div style={styles.alertText}>{errorMessage}</div>}
+          <form onSubmit={handleAddTransaction}>
+            <label style={styles.inputLabel}>
+              🎯 Set Monthly Budget Target (INR)
+            </label>
+            <input
+              type="number"
+              style={styles.inputField}
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+            />
 
-        <form onSubmit={handleAuthSubmit}>
-          <div>
-            <label style={styles.label}>Username</label>
+            <label style={styles.inputLabel}>Transaction Title</label>
             <input
               type="text"
-              style={styles.inputBox}
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              style={styles.inputField}
+              placeholder="e.g., Dinner, Fuel"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
             />
-          </div>
 
-          {!isLoginView && (
-            <div>
-              <label style={styles.label}>Email Address</label>
-              <input
-                type="email"
-                style={styles.inputBox}
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
-          <div>
-            <label style={styles.label}>Password</label>
+            <label style={styles.inputLabel}>Amount Input Value (INR)</label>
             <input
-              type="password"
-              style={styles.inputBox}
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="number"
+              style={styles.inputField}
+              placeholder="0.00"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
               required
             />
+
+            <label style={styles.inputLabel}>Operational Category Grid</label>
+            <select
+              style={styles.inputField}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            <button type="submit" style={styles.submitBtn} disabled={loading}>
+              {loading ? "Processing Sync..." : "Inject Ledger Record"}
+            </button>
+          </form>
+        </div>
+
+        {/* Right Side Database Feed Sync */}
+        <div style={styles.cardBox("rgba(16, 185, 129, 0.2)")}>
+          <div style={styles.sectionTag("#10b981", "rgba(16, 185, 129, 0.1)")}>
+            REALTIME ANALYTICS RADAR
           </div>
 
-          <button type="submit" style={styles.submitBtn(!isLoginView)}>
-            {isLoginView ? "Authenticate Login" : "Account Creation"}
-          </button>
-        </form>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginBottom: "25px",
+              flexWrap: "wrap",
+            }}
+          >
+            <div style={{ flex: "1 1 120px" }}>
+              <h4 style={{ color: "#94a3b8", margin: 0, fontSize: "0.9rem" }}>
+                Available Balance
+              </h4>
+              <p
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "800",
+                  color: "#10b981",
+                  margin: "5px 0",
+                }}
+              >
+                ₹{ledgerBalance}
+              </p>
+            </div>
+            <div style={{ flex: "1 1 120px" }}>
+              <h4 style={{ color: "#94a3b8", margin: 0, fontSize: "0.9rem" }}>
+                Total Burn Rate
+              </h4>
+              <p
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "800",
+                  color: "#ef4444",
+                  margin: "5px 0",
+                }}
+              >
+                ₹{totalExpenses}
+              </p>
+            </div>
+          </div>
+
+          <h3
+            style={{
+              fontSize: "1.05rem",
+              marginBottom: "15px",
+              color: "#e2e8f0",
+            }}
+          >
+            Stored Database Datastream
+          </h3>
+          <div
+            style={{
+              maxHeight: "280px",
+              overflowY: "auto",
+              paddingRight: "5px",
+            }}
+          >
+            {transactions.length === 0 ? (
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: "0.9rem",
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              >
+                No active records found in cloud instance storage matrix.
+              </p>
+            ) : (
+              transactions.map((item) => (
+                <div key={item.id} style={styles.ledgerItem}>
+                  <div>
+                    <strong
+                      style={{
+                        display: "block",
+                        color: "#ffffff",
+                        fontSize: "0.95rem",
+                      }}
+                    >
+                      {item.title}
+                    </strong>
+                    <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                      {item.category}
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: "700", color: "#ef4444" }}>
+                    - ₹{item.amount}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
