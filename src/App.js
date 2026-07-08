@@ -45,6 +45,7 @@ function App() {
 
   useEffect(() => {
     fetchLedgerData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // 📤 Inject New Record System
